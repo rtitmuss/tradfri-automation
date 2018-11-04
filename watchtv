@@ -28,8 +28,8 @@ upnp.on('added', (device) => {
         return;
     }
 
-    if (tvOn[sceneName] === undefined) {
-        tvOn[sceneName] = true;
+    if (tvOn[name] === undefined) {
+        tvOn[name] = true;
         setScene(sceneName);
     }
 });
@@ -42,13 +42,13 @@ upnp.on('deleted', (device) => {
     const name = device['description']['device']['friendlyName'];
     console.log('Deleted ' + name);
 
-    const sceneName = deviceToSceneOn[name];
+    const sceneName = deviceToSceneOff[name];
     if (sceneName === undefined) {
         return;
     }
 
-    if (tvOn[sceneName] === true) {
-        delete tvOn[sceneName];
+    if (name in tvOn) {
+        delete tvOn[name];
         setScene(sceneName);
     }
 });
