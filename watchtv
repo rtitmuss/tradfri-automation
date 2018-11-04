@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+
+const setScene = require('./setScene');
+const upnp = require('node-upnp-utils');
+
+const deviceToSceneOn = {
+  '[TV] UE48J5515': 'Upstairs TV On',
+  '[TV] Samsung 6 Series (55)': 'Living Room Tv On',
+};
+
+const deviceToSceneOff = {
+    '[TV] UE48J5515': 'Upstairs TV Off',
+    '[TV] Samsung 6 Series (55)': 'Living Room Tv Off',
+};
+
+let tvOn = {};
+
+upnp.on('added', (device) => {
+    if (!('description' in device && 'device' in device['description'])) {
+        return;
+    }
+
+    const name = device['description']['device']['friendlyName'];
+    console.log('Added ' + name);
+
+    const sceneName = deviceToSceneOn[name];
+    if (sceneName === undefined) {
+        return;
+    }
+
+    if (tvOn[sceneName] === undefined) {
+        tvOn[sceneName] = true;
+        setScene(sceneName);
+    }
+});
+
+upnp.on('deleted', (device) => {
+    if (!('description' in device && 'device' in device['description'])) {
+        return;
+    }
+
+    const name = device['description']['device']['friendlyName'];
+    console.log('Deleted ' + name);
+
+    const sceneName = deviceToSceneOn[name];
+    if (sceneName === undefined) {
+        return;
+    }
+
+    if (tvOn[sceneName] === true) {
+        delete tvOn[sceneName];
+        setScene(sceneName);
+    }
+});
+
+// Start the discovery process
+upnp.startDiscovery();

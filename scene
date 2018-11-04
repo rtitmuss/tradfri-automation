@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+const scene = require('./setScene');
+
+const args = process.argv.slice(2);
+setScene(args[0], true);

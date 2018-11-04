@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+const { AccessoryTypes } = require ("node-tradfri-client");
+const connectWithGateway = require('./connectWithGateway');
+
+async function main(name) {
+    const tradfri = await connectWithGateway();
+
+    await tradfri.observeDevices();
+    await tradfri.observeGroupsAndScenes();
+
+    tradfri.stopObservingDevices();
+    tradfri.stopObservingGroups();
+
+    const regex = new RegExp(name, 'i');
+
+    const filteredDevices = Object.values(tradfri.devices)
+        .filter(device => device.type === AccessoryTypes.lightbulb)
+        .filter(device => device.name.search(regex) !== -1);
+
+    const filteredGroups = Object.values(tradfri.groups)
+        .map(groupInfo => groupInfo.group)
+        .filter(group => group.name.search(regex) !== -1);
+
+    await Promise.all(filteredDevices.map(device =>
+        tradfri.operateLight(device, { 'onOff': false })));
+
+    await Promise.all(filteredGroups.map(group =>
+        tradfri.operateGroup(group, { 'onOff': false })));
+
+    tradfri.destroy();
+}
+
+const args = process.argv.slice(2);
+main(args[0]);
