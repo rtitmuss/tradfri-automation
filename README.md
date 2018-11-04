@@ -23,6 +23,12 @@ scenes match the regex then one of the scenes will be selected at random.
 Monitors UPnP to observe when a TV is turned on or off, and sets the lights
 to a specified group. If the lights are off then the scene is not set.
 
+## Complementary
+
+`./complementary`
+
+Follow a RGB light, setting another light automatically with complementary colors.
+
 # Set Up
 
 The following scenes are created in the relevant groups:

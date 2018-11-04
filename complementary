@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+
+const connectWithGateway = require('./connectWithGateway');
+const complimentaryColors = require('complementary-colors');
+
+const sourceDevice = 'Den left';
+const targetDevice = 'Den right';
+
+async function deviceUpdated(tradfri, device) {
+    if (device.name !== sourceDevice) {
+        return;
+    }
+
+    const sourceColor = device.lightList[0].color;
+
+    const color = new complimentaryColors('#' + device.lightList[0].color);
+    const rgb = color.triad()[1];
+
+    const targetColor = (rgb.r << 16 | rgb.g << 8 | rgb.b).toString(16);
+
+    const devices = tradfri.devices;
+    const target = Object.values(devices)
+        .filter(device => device.name === targetDevice);
+
+    console.log(sourceColor + ' => ' + targetColor);
+
+    for (let i = 0; i < target.length; i++) {
+        await tradfri.operateLight(target[i], {
+            color: targetColor,
+        });
+    }
+}
+
+async function main() {
+    const tradfri = await connectWithGateway();
+
+    await tradfri
+        .on('device updated', device => deviceUpdated(tradfri, device))
+        .observeDevices();
+}
+
+main();
