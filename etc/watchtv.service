@@ -1,0 +1,13 @@
+[Service]
+WorkingDirectory=/home/pi/tradfri-automation
+ExecStart=/home/pi/tradfri-automation/watchtv
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=watchtv
+User=pi
+Group=pi
+Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target
+

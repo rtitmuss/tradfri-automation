@@ -38,3 +38,11 @@ The following scenes are created in the relevant groups:
 - Daytime, enabled by cron at dawn
 - Tv On, scene set by watchtv
 - Tv Off, scene set by watchtv
+
+# Configuration
+
+On the Rasberry Pi run these commands to enable the watchtv script to run as a service
+
+sudo cp watchtv.service /etc/systemd/system
+sudo systemctl enable watchtv
+sudo systemctl start watchtv
