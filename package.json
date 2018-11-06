@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "delay": "^4.1.0",
+    "node-aead-crypto": "^1.1.6",
+    "node-tradfri-client": "^1.4.1",
+    "node-upnp-utils": "0.0.5",
+    "xml2js": "^0.4.19"
+  }
+}
