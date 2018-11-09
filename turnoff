@@ -23,10 +23,10 @@ async function main(name) {
         .filter(group => group.name.search(regex) !== -1);
 
     await Promise.all(filteredDevices.map(device =>
-        tradfri.operateLight(device, { 'onOff': false })));
+        tradfri.operateLight(device, { 'onOff': false, 'transitionTime': 30.0 })));
 
     await Promise.all(filteredGroups.map(group =>
-        tradfri.operateGroup(group, { 'onOff': false })));
+        tradfri.operateGroup(group, { 'onOff': false, 'transitionTime': 30.0 })));
 
     tradfri.destroy();
 }
