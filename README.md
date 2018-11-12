@@ -47,16 +47,3 @@ sudo cp etc/watchtv.service /etc/systemd/system
 sudo systemctl enable watchtv
 sudo systemctl start watchtv
 
-# Cron
-
-Use the following cron configuration:
-
-# turn off all lights an hour after sunrise
-0 2 * * * /usr/local/bin/sunwait sun up +1:00:00 59.329N, 18.068E; /home/pi/tradfri-automation/turnoff
-
-# turn on evening scene half an hour before sunset
-0 12 * * * /usr/local/bin/sunwait sun down -0:30:00 59.329N, 18.068E; /home/pi/tradfri-automation/scene evening
-
-# set night scene at 11pm
-0 23 * * * /home/pi/tradfri-automation/scene night
-
