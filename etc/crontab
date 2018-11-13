@@ -22,14 +22,14 @@
 # m h  dom mon dow   command
 
 # turn off all lights an hour after sunrise
-0 2 * * * /usr/local/bin/sunwait sun up +1:00:00 59.329N, 18.068E; /home/pi/tradfri-automation/turnoff
+0 2 * * * /usr/local/bin/sunwait sun up +1:00:00 59.329N, 18.068E; /home/pi/tradfri-automation/turnoff 2>&1 | /usr/bin/logger -t turnoff
 
 # turn on morning scene at 6:30
-30 6 * * * /home/pi/tradfri-automation/scene morning
+30 6 * * * /home/pi/tradfri-automation/scene morning 2>&1 | /usr/bin/logger -t scene
 
 # turn on evening scene half an hour before sunset
-0 13 * * * /usr/local/bin/sunwait sun down -0:30:00 59.329N, 18.068E; /home/pi/tradfri-automation/scene evening
+0 13 * * * /usr/local/bin/sunwait sun down -0:30:00 59.329N, 18.068E; /home/pi/tradfri-automation/scene evening 2>&1 | /usr/bin/logger -t scene
 
 # set night scene at 11pm
-0 23 * * * /home/pi/tradfri-automation/scene night
+0 23 * * * /home/pi/tradfri-automation/scene night 2>&1 | /usr/bin/logger -t scene
 
