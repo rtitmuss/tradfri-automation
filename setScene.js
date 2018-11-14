@@ -1,5 +1,9 @@
 const connectWithGateway = require('./connectWithGateway');
 
+function delay(millis) {
+    return new Promise(resolve => setTimeout(resolve, millis));
+}
+
 function randomElement(items) {
     return items[Math.floor(Math.random()*items.length)];
 }
@@ -22,14 +26,52 @@ function isLightInGroupOn(group, devices) {
     return false;
 }
 
+function waitForGroupUpdate(tradfri, mills, fn) {
+    return new Promise((resolve, reject) => {
+        setTimeout(reject, mills);
+
+        tradfri.on("group updated", function handler(updatedGroup) {
+            if (fn(updatedGroup)) {
+                tradfri.removeListener("group updated", handler);
+                resolve();
+            }
+        });
+    });
+}
+
+async function setGroupToScene(tradfri, group, scene, retries) {
+    console.log('Setting ' + group.name + ' to ' + scene.name);
+
+    await tradfri.operateGroup(group, {
+        onOff: true,
+        transitionTime: 240,
+        sceneId: scene.instanceId,
+    }, true);
+
+    let failed = false;
+    await waitForGroupUpdate(tradfri, 5000, (updatedGroup) => {
+        const scenes = tradfri.groups[updatedGroup.instanceId].scenes;
+        console.log(updatedGroup.name
+            + ' is ' + (updatedGroup.onOff ? 'on' : 'off')
+            + ' with scene ' + scenes[updatedGroup.sceneId].name);
+
+        return updatedGroup.instanceId === group.instanceId
+            && updatedGroup.onOff === true
+            && updatedGroup.sceneId === scene.instanceId;
+    }).catch(() => {
+        failed = true;
+    });
+
+    if (failed && retries > 0) {
+        await setGroupToScene(tradfri, group, scene, retries - 1);
+    }
+}
+
 async function setScene(sceneName, turnOn) {
     const tradfri = await connectWithGateway();
 
     await tradfri.observeDevices();
     await tradfri.observeGroupsAndScenes();
-
-    tradfri.stopObservingDevices();
-    tradfri.stopObservingGroups();
 
     const devices = tradfri.devices;
 
@@ -47,13 +89,7 @@ async function setScene(sceneName, turnOn) {
         const scene = randomElement(filteredScenes);
 
         if (turnOn || isLightInGroupOn(group, devices)) {
-            console.log(group.name + ' ON to ' + scene.name);
-
-            await tradfri.operateGroup(group, {
-                onOff: true,
-                transitionTime: 240,
-                sceneId: scene.instanceId,
-            });
+            await setGroupToScene(tradfri, group, scene, 3);
         }
     }
 
