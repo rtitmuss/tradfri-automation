@@ -4,7 +4,7 @@ const connectWithGateway = require('./connectWithGateway');
 const complimentaryColors = require('complementary-colors');
 
 const sourceDevice = 'Den left';
-const targetDevice = 'Den right';
+const targetDevice = 'Upstairs shelves';
 
 async function deviceUpdated(tradfri, device) {
     if (device.name !== sourceDevice) {

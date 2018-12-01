@@ -1,0 +1,13 @@
+[Service]
+WorkingDirectory=/home/pi/tradfri-automation
+ExecStart=/home/pi/tradfri-automation/complementary
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=complementary
+User=pi
+Group=pi
+Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target
+
